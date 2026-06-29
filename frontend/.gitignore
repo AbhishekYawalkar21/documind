@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+.env.example
+
+# Node/React
+/frontend/node_modules
+/frontend/dist
+/frontend/.env
