@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from app.utils.db import engine, get_db, Base
 from app.models.document import User, Document, DocumentChunk, AnalysisResult, QAHistory
 from app.schemas.document import HealthResponse
+from app.routes.documents import router as documents_router
 
 load_dotenv()
 
@@ -27,6 +28,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+app.include_router(documents_router)
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check(db: Session = Depends(get_db)):

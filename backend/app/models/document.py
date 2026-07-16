@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Integer, DateTime, LargeBinary, Text, Float
+from pgvector.sqlalchemy import Vector
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
@@ -29,14 +30,14 @@ class Document(Base):
 class DocumentChunk(Base):
     __tablename__ = "document_chunks"
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     document_id = Column(UUID(as_uuid=True), nullable=False, index=True)
     chunk_index = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
     start_position = Column(Integer)
     end_position = Column(Integer)
     page_number = Column(Integer)
-    embedding = Column(String)
+    embedding = Column(Vector(dim=1536), nullable=True)
     token_count = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)
 
