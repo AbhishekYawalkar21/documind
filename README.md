@@ -36,30 +36,28 @@ Ollama (Ensure Ollama is running before starting the backend)
 
 ⚙️ Getting Started
 1. Clone the Repository
-Bash
 git clone <your-repo-url>
 cd DocuMind
+
 2. Environment Setup
 Create a virtual environment and install the required dependencies:
 
-Bash
 # Windows
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
+
 3. Database Configuration
 Install and initialize PostgreSQL 15.
 
 Enable the vector extension in your database:
 
-SQL
 CREATE EXTENSION IF NOT EXISTS vector;
 Configure your connection string in your .env file.
 
 4. Running the Application
 Ensure your Ollama service is running, then start the backend:
 
-Bash
 # Run using Uvicorn
 uvicorn main:app --reload
 🏗 Project Architecture
