@@ -17,7 +17,7 @@ DocuMind is an intelligent document processing engine designed to analyze, extra
 
 ## 🛠 Tech Stack
 
-* **Language:** Python, TypeScript
+* **Languages:** Python, TypeScript
 * **Frameworks/Libraries:** FastAPI, LangGraph, React
 * **Database:** PostgreSQL (with pgvector extension)
 * **AI/LLM:** Ollama (Local model execution)
