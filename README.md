@@ -17,11 +17,11 @@ DocuMind is an intelligent document processing engine designed to analyze, extra
 
 ## 🛠 Tech Stack
 
-* **Language:** Python 3.11, TypeScript
+* **Language:** Python, TypeScript
 * **Frameworks/Libraries:** FastAPI, LangGraph, React
-* **Database:** PostgreSQL 15 (with pgvector extension)
+* **Database:** PostgreSQL (with pgvector extension)
 * **AI/LLM:** Ollama (Local model execution)
-* **Development:** VS Code, Git, Node.js 18+
+* **Development:** VS Code, Git, Node.js
 
 ---
 
@@ -41,7 +41,7 @@ Before starting, install:
 * **Node.js 18+**
 * **Git**
 * **VS Code**
-* **Ollama** (Ensure Ollama is running before starting the backend)
+* **Ollama**
 
 ---
 
