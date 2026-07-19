@@ -1,7 +1,5 @@
 # DocuMind: PDF Intelligence System
 
-It uses LLMs, vector databases, and multi-step reasoning (LangGraph) to understand, extract, and answer questions about documents at scale.
-
 DocuMind is an intelligent document processing engine designed to analyze, extract, and synthesize information from large-scale PDF datasets. By leveraging Large Language Models (LLMs), vector databases, and multi-step agentic workflows, DocuMind provides high-fidelity answers and insights from complex documentation.
 
 ---
@@ -21,7 +19,8 @@ DocuMind is an intelligent document processing engine designed to analyze, extra
 * **Frameworks/Libraries:** FastAPI, LangGraph, React
 * **Database:** PostgreSQL (with pgvector extension)
 * **AI/LLM:** Ollama (Local model execution)
-* **Development:** VS Code, Git, Node.js
+* **Runtime:** Node.js 18+ (frontend), Python 3.11 (backend)
+* **Development:** VS Code, Git
 
 ---
 
@@ -59,6 +58,13 @@ Create a virtual environment and install the required dependencies:
 # Windows
 python -m venv venv
 venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+```bash
+# macOS / Linux
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -101,3 +107,4 @@ npm run dev
 > © 2026 Abhishek Yawalkar. All rights reserved.
 >
 > This repository is strictly a personal project created for skill-building and hands-on learning purposes. Viewing and forking the repository for personal review is permitted under GitHub's Terms of Service. However, no permission is granted to copy, modify, redistribute, or use this source code, in whole or in part, for any commercial or non-commercial projects.
+>For inquiries regarding usage or collaboration, please contact the copyright holder directly.
