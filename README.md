@@ -107,4 +107,5 @@ npm run dev
 > © 2026 Abhishek Yawalkar. All rights reserved.
 >
 > This repository is strictly a personal project created for skill-building and hands-on learning purposes. Viewing and forking the repository for personal review is permitted under GitHub's Terms of Service. However, no permission is granted to copy, modify, redistribute, or use this source code, in whole or in part, for any commercial or non-commercial projects.
+>
 >For inquiries regarding usage or collaboration, please contact the copyright holder directly.
