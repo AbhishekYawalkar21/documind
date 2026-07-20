@@ -1,3 +1,9 @@
+from app.services.langgraph_agent import DocumentAnalysisAgent
+from app.models.document import AnalysisResult
+import uuid
+import time
+from threading import Thread
+from sqlalchemy import update
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import uuid4
@@ -276,6 +282,198 @@ async def get_document_chunks(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching chunks: {str(e)}"
+        )
+
+@router.post("/{document_id}/analyze")
+async def analyze_document(
+    document_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Trigger document analysis using Ollama local LLM
+    
+    This endpoint:
+    1. Fetches document and its chunks
+    2. Runs multi-step analysis with local Ollama
+    3. Stores results in database
+    4. Returns analysis results
+    
+    - **document_id**: UUID of the document to analyze
+    """
+    
+    try:
+        # Fetch document
+        document = db.query(Document).filter(Document.id == document_id).first()
+        
+        if not document:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Document {document_id} not found"
+            )
+        
+        # Check if document has been processed
+        chunks = db.query(DocumentChunk)\
+            .filter(DocumentChunk.document_id == document_id)\
+            .order_by(DocumentChunk.chunk_index)\
+            .all()
+        
+        if not chunks:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Document not processed yet. Call /process endpoint first."
+            )
+        
+        # Extract chunk content
+        chunk_texts = [chunk.content for chunk in chunks]
+        
+        # Check if analysis already exists
+        existing_analysis = db.query(AnalysisResult)\
+            .filter(AnalysisResult.document_id == document_id)\
+            .first()
+        
+        if existing_analysis and existing_analysis.analysis_status == "completed":
+            return {
+                "analysis_id": str(existing_analysis.id),
+                "status": "analysis_exists",
+                "message": "Document already analyzed",
+                "completed_at": existing_analysis.analysis_completed_at
+            }
+        
+        # Create analysis record
+        analysis_id = str(uuid4())
+        analysis = AnalysisResult(
+            id=analysis_id,
+            document_id=document_id,
+            analysis_status="pending"
+        )
+        db.add(analysis)
+        db.commit()
+        
+        # Run analysis in background
+        def run_analysis():
+            try:
+                print(f"\n[BACKGROUND] Starting analysis for {document_id}")
+                
+                agent = DocumentAnalysisAgent()
+                
+                start_time = time.time()
+                state = agent.execute(
+                    document_id=str(document_id),
+                    chunks=chunk_texts
+                )
+                processing_time = time.time() - start_time
+                
+                print(f"[BACKGROUND] Analysis complete in {processing_time:.2f}s")
+                
+                # Update database
+                db.execute(
+                    update(AnalysisResult).where(
+                        AnalysisResult.id == analysis_id
+                    ).values(
+                        summary=state.summary,
+                        topics=state.topics,
+                        entities=state.entities,
+                        compliance_flags=state.compliance_flags,
+                        knowledge_graph=state.knowledge_graph,
+                        raw_analysis=state.to_dict(),
+                        analysis_status="completed",
+                        analysis_completed_at=state.completed_at,
+                        processing_time_seconds=processing_time
+                    )
+                )
+                db.commit()
+                
+                print(f"[BACKGROUND] Results saved")
+                
+            except Exception as e:
+                print(f"[BACKGROUND] Error: {str(e)}")
+                db.execute(
+                    update(AnalysisResult).where(
+                        AnalysisResult.id == analysis_id
+                    ).values(
+                        analysis_status="failed",
+                        raw_analysis={"error": str(e)}
+                    )
+                )
+                db.commit()
+        
+        # Start background thread
+        thread = Thread(target=run_analysis, daemon=True)
+        thread.start()
+        
+        return {
+            "analysis_id": analysis_id,
+            "status": "analysis_started",
+            "message": "Analysis started. Check status using analysis_id.",
+            "document_id": str(document_id),
+            "note": "⏳ First analysis takes longer as model loads"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error starting analysis: {str(e)}"
+        )
+
+@router.get("/{document_id}/analysis/{analysis_id}")
+async def get_analysis_results(
+    document_id: str,
+    analysis_id: str,
+    db: Session = Depends(get_db)
+):
+    """Get analysis results for a document"""
+    
+    try:
+        analysis = db.query(AnalysisResult)\
+            .filter(AnalysisResult.id == analysis_id)\
+            .filter(AnalysisResult.document_id == document_id)\
+            .first()
+        
+        if not analysis:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Analysis not found"
+            )
+        
+        if analysis.analysis_status == "pending":
+            return {
+                "analysis_id": analysis_id,
+                "status": "pending",
+                "message": "Analysis in progress...",
+                "document_id": str(document_id)
+            }
+        
+        if analysis.analysis_status == "failed":
+            return {
+                "analysis_id": analysis_id,
+                "status": "failed",
+                "error": analysis.raw_analysis.get("error", "Unknown error"),
+                "document_id": str(document_id)
+            }
+        
+        return {
+            "analysis_id": analysis_id,
+            "status": "completed",
+            "document_id": str(document_id),
+            "analysis": {
+                "summary": analysis.summary,
+                "topics": analysis.topics,
+                "entities": analysis.entities,
+                "compliance_flags": analysis.compliance_flags,
+                "knowledge_graph": analysis.knowledge_graph
+            },
+            "processing_time_seconds": analysis.processing_time_seconds,
+            "completed_at": analysis.analysis_completed_at
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching analysis: {str(e)}"
         )
 
 @router.delete("/{document_id}")

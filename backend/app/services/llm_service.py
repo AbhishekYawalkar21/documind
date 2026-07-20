@@ -1,5 +1,7 @@
 import requests
+import re
 from typing import Optional
+from langchain_ollama import ChatOllama
 import os
 from dotenv import load_dotenv
 import time
@@ -21,6 +23,12 @@ class LLMService:
         
         print(f"[LLM] Initialized with model: {self.model}")
         print(f"[LLM] Ollama URL: {self.ollama_url}")
+
+        self.llm = ChatOllama(
+            base_url=self.ollama_url,
+            model=self.model,
+            temperature=self.temperature
+        )
         
         self._test_connection()
     
@@ -106,12 +114,19 @@ class LLMService:
         
         json_system = (system_prompt or "") + "\n\nRespond with ONLY valid JSON, no markdown, no extra text, no code blocks."
         
-        response = self.llm(prompt, json_system)
+        messages = [
+        ("system", json_system),
+        ("human", prompt)
+        ]
         
-        # Clean up response if it has markdown
-        if response.startswith("```"):
-            response = response.split("```")[1]
-            if response.startswith("json"):
-                response = response[4:]
+        ai_message = self.llm.bind(format="json").invoke(messages)
+        response = ai_message.content
+
+        if "```json" in response:
+            response = response.split("```json")[1].split("```")[0]
+        elif "```" in response:
+            response = response.split("```")[1].split("```")[0]
+
+        response = re.sub(r'\\([^"\\\/bfnrtu])', r'\1', response)
         
         return response.strip()

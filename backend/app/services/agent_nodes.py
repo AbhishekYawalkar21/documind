@@ -27,6 +27,8 @@ class AnalysisNodes:
 1. A clear 3-5 sentence summary
 2. Main topics (list 3-5 topics)
 
+CRITICAL: If you use quotes inside your text summary descriptions, you MUST use single quotes (') instead of double quotes (\"). Double quotes will break the JSON parsing pipeline.
+
 Document:
 {context}
 
