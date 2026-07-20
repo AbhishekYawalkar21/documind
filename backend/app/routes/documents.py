@@ -1,4 +1,5 @@
 from app.services.langgraph_agent import DocumentAnalysisAgent
+from app.services.qa_service import QAService
 from app.models.document import AnalysisResult
 import uuid
 import time
@@ -474,6 +475,147 @@ async def get_analysis_results(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching analysis: {str(e)}"
+        )
+
+@router.post("/{document_id}/question")
+async def ask_question(
+    document_id: str,
+    question_data: dict,
+    db: Session = Depends(get_db)
+):
+    """Ask a question about a document"""
+    
+    try:
+        question = question_data.get("question", "").strip()
+        
+        if not question:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Question cannot be empty"
+            )
+        
+        # Fetch document
+        document = db.query(Document).filter(Document.id == document_id).first()
+        
+        if not document:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Document not found"
+            )
+        
+        # Fetch chunks
+        chunks = db.query(DocumentChunk)\
+            .filter(DocumentChunk.document_id == document_id)\
+            .order_by(DocumentChunk.chunk_index)\
+            .all()
+        
+        if not chunks:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Document has no chunks. Process document first."
+            )
+        
+        # Fetch latest analysis for summary
+        analysis = db.query(AnalysisResult)\
+            .filter(AnalysisResult.document_id == document_id)\
+            .filter(AnalysisResult.analysis_status == "completed")\
+            .order_by(AnalysisResult.analysis_completed_at.desc())\
+            .first()
+        
+        # Prepare chunks for QA
+        chunk_dicts = [
+            {"id": idx, "content": chunk.content}
+            for idx, chunk in enumerate(chunks)
+        ]
+        
+        # Initialize QA service
+        llm = LLMService()
+        qa_service = QAService(llm)
+        
+        # Find relevant chunks
+        relevant_chunks_with_scores = qa_service.find_relevant_chunks(
+            question, chunk_dicts, top_k=3
+        )
+        
+        relevant_chunk_ids = [item[0] for item in relevant_chunks_with_scores]
+        relevant_chunk_contents = [item[1] for item in relevant_chunks_with_scores]
+        
+        # Generate answer
+        answer, confidence = qa_service.answer_question(
+            question,
+            relevant_chunk_contents,
+            document_summary=analysis.summary if analysis else None
+        )
+        
+        # Store Q&A in database
+        from app.models.document import QAHistory
+        qa_record = QAHistory(
+            id=uuid4(),
+            document_id=document_id,
+            user_query=question,
+            ai_response=answer,
+            relevant_chunks=relevant_chunk_ids,
+            confidence_score=confidence
+        )
+        db.add(qa_record)
+        db.commit()
+        db.refresh(qa_record)
+        
+        return {
+            "qa_id": str(qa_record.id),
+            "question": question,
+            "answer": answer,
+            "confidence_score": round(confidence, 2),
+            "relevant_chunks": relevant_chunk_ids,
+            "document_id": str(document_id)
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing question: {str(e)}"
+        )
+
+@router.get("/{document_id}/qa-history")
+async def get_qa_history(
+    document_id: str,
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):
+    """Get Q&A history for a document"""
+    
+    try:
+        from app.models.document import QAHistory
+        
+        qa_records = db.query(QAHistory)\
+            .filter(QAHistory.document_id == document_id)\
+            .offset(skip)\
+            .limit(limit)\
+            .order_by(QAHistory.created_at.desc())\
+            .all()
+        
+        return {
+            "document_id": str(document_id),
+            "qa_count": len(qa_records),
+            "qa_history": [
+                {
+                    "qa_id": str(qa.id),
+                    "question": qa.user_query,
+                    "answer": qa.ai_response[:200] + "..." if len(qa.ai_response) > 200 else qa.ai_response,
+                    "confidence": round(qa.confidence_score or 0, 2),
+                    "created_at": qa.created_at
+                }
+                for qa in qa_records
+            ]
+        }
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching Q&A history: {str(e)}"
         )
 
 @router.delete("/{document_id}")
