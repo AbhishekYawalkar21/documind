@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './index.css';
 import { DocumentUpload } from './components/DocumentUpload';
 import { DocumentProcessing } from './components/DocumentProcessing';
+import { AnalysisResults } from './components/AnalysisResults';
 
 function App() {
   const [currentDocument, setCurrentDocument] = useState<any>(null);
@@ -41,22 +42,20 @@ function App() {
             ].map((item, idx) => (
               <div key={item.step}>
                 <div
-                  className={`flex flex-col items-center ${
-                    step === item.step ||
+                  className={`flex flex-col items-center ${step === item.step ||
                     (step === 'process' && idx < 2) ||
                     step === 'analyze'
-                      ? 'text-blue-600'
-                      : 'text-gray-400'
-                  }`}
+                    ? 'text-blue-600'
+                    : 'text-gray-400'
+                    }`}
                 >
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
-                      step === item.step ||
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${step === item.step ||
                       (step === 'process' && idx < 2) ||
                       step === 'analyze'
-                        ? 'bg-blue-600'
-                        : 'bg-gray-300'
-                    }`}
+                      ? 'bg-blue-600'
+                      : 'bg-gray-300'
+                      }`}
                   >
                     {item.num}
                   </div>
@@ -95,19 +94,18 @@ function App() {
           )}
 
           {step === 'analyze' && currentDocument && (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">
-                Analyzing with Ollama...
-              </h2>
-              <div className="inline-block animate-spin">
-                <div className="text-4xl">⚙️</div>
-              </div>
-              <p className="text-gray-600 mt-4">
-                Our AI is analyzing your document
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                This may take 1-2 minutes (first run loads model)
-              </p>
+            <div className="space-y-6">
+              <AnalysisResults documentId={currentDocument.id} />
+
+              <button
+                onClick={() => {
+                  setCurrentDocument(null);
+                  setStep('upload');
+                }}
+                className="btn-secondary w-full"
+              >
+                ↻ Analyze Another Document
+              </button>
             </div>
           )}
         </div>
