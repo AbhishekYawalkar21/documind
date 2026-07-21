@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 import os
 from dotenv import load_dotenv
 
@@ -10,6 +11,11 @@ from app.schemas.document import HealthResponse
 from app.routes.documents import router as documents_router
 
 load_dotenv()
+
+# Enable vector extension before creating tables
+with engine.connect() as connection:
+    connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
+    connection.commit()
 
 # Create tables if they don't exist
 Base.metadata.create_all(bind=engine)

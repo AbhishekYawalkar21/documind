@@ -38,7 +38,7 @@ services:
       dockerfile: Dockerfile
     container_name: documind-backend
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/documind
+      DATABASE_URL: postgresql://postgres:123456@postgres:5432/documind
       OLLAMA_URL: http://ollama:11434
       OLLAMA_MODEL: mistral
       DEBUG: "False"

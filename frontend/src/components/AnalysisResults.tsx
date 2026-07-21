@@ -26,7 +26,7 @@ export const AnalysisResults: React.FC<{
 }> = ({ documentId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [, setAnalysisId] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [processingTime, setProcessingTime] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<
