@@ -1,17 +1,30 @@
+# --- Framework & Server ---
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 pydantic==2.4.2
 python-dotenv==1.0.0
-psycopg2-binary==2.9.9
-sqlalchemy==2.0.23
-alembic==1.12.1
 aiofiles==23.2.1
 python-multipart==0.0.6
+
+# --- Database & Vector Storage ---
+psycopg2-binary==2.9.9
+SQLAlchemy==2.0.23
+alembic==1.12.1
+pgvector==0.5.0
+
+# --- AI & Orchestration ---
 langchain==0.1.0
+langchain-community==0.0.20
+langchain-core==0.1.23
 langgraph==0.0.19
+langsmith==0.0.87
+tiktoken==0.5.1
+
+# --- Document Processing ---
 pypdf==4.0.1
 pdfplumber==0.10.3
-tiktoken==0.5.1
+
+# --- Testing & HTTP Clients ---
 pytest==7.4.3
 pytest-asyncio==0.21.1
 httpx==0.25.2
