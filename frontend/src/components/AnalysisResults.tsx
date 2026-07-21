@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { DocumentQA } from './DocumentQA';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -180,11 +181,10 @@ export const AnalysisResults: React.FC<{
                   | 'graph'
                 )
               }
-              className={`px-4 py-2 font-medium border-b-2 transition ${
-                activeTab === tab.id
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
+              className={`px-4 py-2 font-medium border-b-2 transition ${activeTab === tab.id
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
+                }`}
             >
               {tab.label}
             </button>
@@ -280,15 +280,14 @@ export const AnalysisResults: React.FC<{
                       )}
                     </div>
                     <span
-                      className={`px-2 py-1 rounded text-xs font-semibold ${
-                        flag.severity === 'critical'
-                          ? 'bg-red-200'
-                          : flag.severity === 'high'
+                      className={`px-2 py-1 rounded text-xs font-semibold ${flag.severity === 'critical'
+                        ? 'bg-red-200'
+                        : flag.severity === 'high'
                           ? 'bg-orange-200'
                           : flag.severity === 'medium'
-                          ? 'bg-yellow-200'
-                          : 'bg-blue-200'
-                      }`}
+                            ? 'bg-yellow-200'
+                            : 'bg-blue-200'
+                        }`}
                     >
                       {flag.severity.toUpperCase()}
                     </span>
@@ -327,6 +326,8 @@ export const AnalysisResults: React.FC<{
           </div>
         )}
       </div>
+      {/* Q&A Section */}
+      <DocumentQA documentId={documentId} />
     </div>
   );
 };

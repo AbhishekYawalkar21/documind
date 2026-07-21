@@ -1,6 +1,6 @@
 from app.services.langgraph_agent import DocumentAnalysisAgent
+from app.services.llm_service import LLMService
 from app.services.qa_service import QAService
-from app.models.document import AnalysisResult
 import uuid
 import time
 from threading import Thread
@@ -12,7 +12,7 @@ from typing import List
 import os
 
 from app.utils.db import get_db
-from app.models.document import Document, User, DocumentChunk
+from app.models.document import Document, User, DocumentChunk, AnalysisResult, QAHistory
 from app.schemas.document import DocumentResponse, DocumentDetailResponse
 from app.services.pdf_service import PDFValidator, PDFMetadataExtractor
 from app.services.text_extraction_service import TextExtractor
@@ -105,18 +105,18 @@ async def get_document(
         if not document:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Document not found"
+                detail="Document not found"
             )
         
         return {
-            "id": document.id,
+            "id": str(document.id),
             "filename": document.filename,
             "file_size_bytes": document.file_size_bytes,
             "mime_type": document.mime_type,
             "status": document.status,
-            "pdf_metadata": document.pdf_metadata,
-            "created_at": document.created_at,
-            "updated_at": document.updated_at
+            "pdf_metadata": document.pdf_metadata or {},
+            "created_at": document.created_at.isoformat() if hasattr(document.created_at, "isoformat") else document.created_at,
+            "updated_at": document.updated_at.isoformat() if hasattr(document.updated_at, "isoformat") else document.updated_at
         }
     
     except HTTPException:
@@ -136,20 +136,22 @@ async def list_documents(
     """List all documents"""
     
     try:
-        documents = db.query(Document)\
-            .offset(skip)\
-            .limit(limit)\
-            .order_by(Document.created_at.desc())\
+        documents = (
+            db.query(Document)
+            .order_by(Document.created_at.desc())
+            .offset(skip)
+            .limit(limit)
             .all()
+        )
         
         return [
             {
-                "id": doc.id,
+                "id": str(doc.id),
                 "filename": doc.filename,
                 "file_size_bytes": doc.file_size_bytes,
                 "mime_type": doc.mime_type,
                 "status": doc.status,
-                "created_at": doc.created_at
+                "created_at": doc.created_at.isoformat() if hasattr(doc.created_at, "isoformat") else doc.created_at
             }
             for doc in documents
         ]
