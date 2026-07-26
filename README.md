@@ -82,7 +82,7 @@ Each node in the LangGraph agent is independent, which keeps the pipeline modula
 ## ⚙️ Getting Started
 
 ```bash
-git clone <your-repo-url>
+git clone <this-repo-url>
 cd documind
 ```
 
@@ -98,7 +98,7 @@ venv\Scripts\Activate.ps1
 source venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env       # then fill in your values
+cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
