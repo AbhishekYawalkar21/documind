@@ -47,6 +47,7 @@ DocuMind is an intelligent document processing engine that uses **local Ollama L
 
 ### Infrastructure
 * Docker + Docker Compose
+* Nginx (reverse proxy and static file serving in production)
 * PostgreSQL with pgvector extension
 * Ollama service
 * GitHub Actions (CI/CD)
