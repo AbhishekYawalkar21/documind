@@ -86,6 +86,20 @@ git clone <this-repo-url>
 cd documind
 ```
 
+**Option A — Docker (recommended, fastest)**
+
+Requires only Docker Desktop — no local Python, Node.js, or PostgreSQL install needed. Postgres and Ollama both run as containers, and the backend/frontend are built and run inside containers too.
+
+```bash
+docker-compose build
+docker-compose up -d
+```
+On the first run, the Ollama container downloads its model (~4GB), so the backend may take a few extra minutes to become available.
+
+**Option B — Manual setup**
+
+Requires Python 3.11+, Node.js 18+, PostgreSQL 15 with the `pgvector` extension enabled, and [Ollama](https://ollama.ai) installed and running locally with a pulled model (e.g. `ollama pull mistral`).
+
 Backend:
 ```bash
 cd backend
@@ -98,7 +112,7 @@ venv\Scripts\Activate.ps1
 source venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env
+cp .env.example .env       # then fill in your values
 uvicorn app.main:app --reload
 ```
 
@@ -108,8 +122,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
-Requires Python 3.11+, Node.js 18+, PostgreSQL 15 with the `pgvector` extension enabled, and [Ollama](https://ollama.ai) running locally with a pulled model (e.g. `ollama pull mistral`).
 
 ---
 
