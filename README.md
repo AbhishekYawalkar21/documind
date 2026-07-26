@@ -79,6 +79,40 @@ Each node in the LangGraph agent is independent, which keeps the pipeline modula
 
 ---
 
+## ⚙️ Getting Started
+
+```bash
+git clone <your-repo-url>
+cd documind
+```
+
+Backend:
+```bash
+cd backend
+python -m venv venv
+
+# Windows
+venv\Scripts\Activate.ps1
+
+# Mac/Linux
+source venv/bin/activate
+
+pip install -r requirements.txt
+cp .env.example .env       # then fill in your values
+uvicorn app.main:app --reload
+```
+
+Frontend:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Requires Python 3.11+, Node.js 18+, PostgreSQL 15 with the `pgvector` extension enabled, and [Ollama](https://ollama.ai) running locally with a pulled model (e.g. `ollama pull mistral`).
+
+---
+
 ## 🌍 Real-World Applications
 
 * Legal document analysis
