@@ -1,103 +1,91 @@
 # DocuMind: PDF Intelligence System
 
-DocuMind is an intelligent document processing engine designed to analyze, extract, and synthesize information from large-scale PDF datasets. By leveraging Large Language Models (LLMs), vector databases, and multi-step agentic workflows, DocuMind provides high-fidelity answers and insights from complex documentation.
+DocuMind is an intelligent document processing engine that uses **local Ollama LLMs** (completely free — no API costs) to analyze, extract, and synthesize information from large-scale PDF datasets. By leveraging Large Language Models, vector databases, and a multi-step LangGraph agent, DocuMind provides high-fidelity answers and insights from complex documentation.
 
 ---
 
 ## 🚀 Key Features
 
-* **Vectorized Search:** Leverages pgvector for efficient, high-dimensional similarity search.
-* **Agentic Workflows:** Utilizes LangGraph for multi-step reasoning, allowing the system to handle complex queries that require multiple processing stages.
-* **Scalable Architecture:** Designed to handle heavy document loads with a clean separation between data ingestion and query processing.
-* **LLM-Powered Extraction:** Automated extraction of structured data from unstructured PDF text.
+* 📄 **PDF Upload** — drag-and-drop interface for document ingestion
+* 🤖 **Local AI Analysis** — powered by Ollama, no API costs, no rate limits
+* 👥 **Entity Extraction** — names, dates, amounts, emails, and more
+* ⚠️ **Compliance Checking** — flags GDPR, PII, and security issues
+* 🔗 **Knowledge Graph Creation** — maps relationships between entities
+* 💬 **Real-Time Q&A** — ask questions directly against a document
+* 📚 **Document History Tracking** — persistent analysis records
+* 🔍 **Vectorized Search** — pgvector-powered semantic similarity search
+* 🧠 **Agentic Workflows** — LangGraph multi-step reasoning for complex queries
+* 📈 **Scalable Architecture** — clean separation between ingestion and query processing
+
+---
+
+## 🏗 Architecture
+
+* **Backend:** FastAPI + PostgreSQL + Ollama
+* **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS
+* **AI:** LangGraph multi-step agent running on local Ollama models
+* **Deployment:** Docker + Docker Compose
 
 ---
 
 ## 🛠 Tech Stack
 
-* **Languages:** Python, TypeScript
-* **Frameworks/Libraries:** FastAPI, LangGraph, React
-* **Database:** PostgreSQL (with pgvector extension)
-* **AI/LLM:** Ollama (Local model execution)
-* **Runtime:** Node.js 18+ (frontend), Python 3.11 (backend)
-* **Development:** VS Code, Git
+### Backend
+* FastAPI 0.104+ (REST API)
+* PostgreSQL 15 + pgvector (database)
+* SQLAlchemy 2.0 (ORM)
+* Ollama (local LLM)
+* LangGraph (multi-step agent)
+* PyPDF + pdfplumber (text extraction)
+
+### Frontend
+* React 18 + TypeScript
+* Vite (build tool and dev server)
+* Tailwind CSS (styling)
+* Axios (HTTP client)
+* Zustand (state management)
+
+### Infrastructure
+* Docker + Docker Compose
+* PostgreSQL with pgvector extension
+* Ollama service
+* GitHub Actions (CI/CD)
 
 ---
 
-## 🏗 Project Architecture
+## 🔄 How It Works
 
-* **Ingestion Pipeline:** Handles PDF parsing, chunking, and embedding generation.
-* **Vector Store:** Stores embeddings in PostgreSQL using pgvector.
-* **Reasoning Engine:** LangGraph-based state machine that orchestrates retrieval, synthesis, and response generation.
+```
+PDF Upload
+   ↓
+Text Extraction (pypdf + pdfplumber)
+   ↓
+Semantic Chunking (with overlap)
+   ↓
+LangGraph 5-Node Agent Analysis:
+   ├─ Node 1: Summarization
+   ├─ Node 2: Entity Extraction
+   ├─ Node 3: Compliance Checking
+   ├─ Node 4: Relationship Mapping
+   └─ Node 5: Q&A Preparation
+   ↓
+Store Results in PostgreSQL + pgvector
+   ↓
+Display Results in Frontend
+```
+
+Each node in the LangGraph agent is independent, which keeps the pipeline modular, testable, and easy to extend with new analysis capabilities.
 
 ---
 
-## 📋 Prerequisites
+## 🌍 Real-World Applications
 
-Before starting, install:
-* **Python 3.11**
-* **PostgreSQL 15**
-* **Node.js 18+**
-* **Git**
-* **VS Code**
-* **Ollama**
-
----
-
-## ⚙️ Getting Started
-
-### 1. Clone the Repository
-```bash
-git clone <your-repo-url>
-cd DocuMind
-```
-
-### 2. Environment Setup (Backend)
-Create a virtual environment and install the required dependencies:
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-```bash
-# macOS / Linux
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-### 3. Database Configuration
-Install and initialize PostgreSQL 15.
-
-Enable the vector extension in your database:
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-```
-Configure your connection string in your `.env` file.
-
-### 4. Frontend Setup
-Install the necessary package dependencies for the user interface:
-```bash
-# From the root directory, navigate to your frontend folder (e.g., cd frontend)
-npm install
-```
-
-### 5. Running the Application
-
-**Start the Backend:**
-Ensure your Ollama service is running, then start the backend server:
-```bash
-# Run using Uvicorn
-uvicorn main:app --reload
-```
-
-**Start the Frontend:**
-Open a separate terminal window, navigate to your frontend directory, and launch the development environment:
-```bash
-npm run dev
-```
+* Legal document analysis
+* Contract review automation
+* Compliance checking
+* Financial document processing
+* HR document screening
+* Customer document processing
 
 ---
 
@@ -106,6 +94,6 @@ npm run dev
 > [!NOTE]
 > © 2026 Abhishek Yawalkar. All rights reserved.
 >
-> This repository is strictly a personal project created for skill-building and hands-on learning purposes. Viewing and forking the repository for personal review is permitted under GitHub's Terms of Service. However, no permission is granted to copy, modify, redistribute, or use this source code, in whole or in part, for any commercial or non-commercial projects.
+> This repository is a personal project created for skill-building and hands-on learning purposes. Viewing and forking the repository for personal review is permitted under GitHub's Terms of Service. However, no permission is granted to copy, modify, redistribute, or use this source code, in whole or in part, for any commercial or non-commercial projects.
 >
->For inquiries regarding usage or collaboration, please contact the copyright holder directly.
+> For inquiries regarding usage or collaboration, please contact the copyright holder directly.
