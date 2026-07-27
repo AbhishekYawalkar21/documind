@@ -1,21 +1,16 @@
 # DocuMind: PDF Intelligence System
 
-DocuMind is an intelligent document processing engine that uses **local Ollama LLMs** (completely free — no API costs) to analyze, extract, and synthesize information from large-scale PDF datasets. By leveraging Large Language Models, vector databases, and a multi-step LangGraph agent, DocuMind provides high-fidelity answers and insights from complex documentation.
-
+DocuMind is a document intelligence system that extracts and analyzes information from PDFs using a local LLM, a multi-step LangGraph agent, and PostgreSQL with pgvector for semantic search. It processes documents through text extraction, chunking, and agentic reasoning to generate summaries, extract entities, flag compliance issues, map relationships, and answer questions — running entirely on local infrastructure with no external API calls.
+ 
 ---
-
+ 
 ## 🚀 Key Features
-
-* 📄 **PDF Upload** — drag-and-drop interface for document ingestion
-* 🤖 **Local AI Analysis** — powered by Ollama, no API costs, no rate limits
-* 👥 **Entity Extraction** — names, dates, amounts, emails, and more
-* ⚠️ **Compliance Checking** — flags GDPR, PII, and security issues
-* 🔗 **Knowledge Graph Creation** — maps relationships between entities
-* 💬 **Real-Time Q&A** — ask questions directly against a document
-* 📚 **Document History Tracking** — persistent analysis records
-* 🔍 **Vectorized Search** — pgvector-powered semantic similarity search
-* 🧠 **Agentic Workflows** — LangGraph multi-step reasoning for complex queries
-* 📈 **Scalable Architecture** — clean separation between ingestion and query processing
+ 
+* 🤖 **Local LLM Analysis** — document analysis runs through Ollama, with no external API calls
+* 👥 **Entity Extraction** — extracts names, dates, amounts, emails, and other structured data
+* ⚠️ **Compliance Checking** — flags GDPR, PII, and security-related issues in document text
+* 🔗 **Knowledge Graph Creation** — maps relationships between extracted entities
+* 💬 **Document Q&A** — semantic search over document embeddings (pgvector) to answer questions against a document
 
 ---
 
