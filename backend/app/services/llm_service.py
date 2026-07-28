@@ -1,7 +1,7 @@
 import requests
 import re
 from typing import Optional
-from langchain_community.chat_models import ChatOllama
+from langchain_ollama import ChatOllama
 import os
 from dotenv import load_dotenv
 import time
