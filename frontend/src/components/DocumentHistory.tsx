@@ -75,40 +75,45 @@ export const DocumentHistory: React.FC<{
 
     return (
         <div className="card">
-            <h3 className="text-lg font-semibold mb-4">📚 History</h3>
+            {/* <h3 className="text-lg font-semibold mb-4">📚 History</h3> */}
 
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-                {documents.map((doc) => (
-                    <div
-                        key={doc.id}
-                        className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition cursor-pointer"
-                        onClick={() => onSelectDocument(doc)}
-                    >
-                        <div className="flex justify-between items-start gap-4">
-                            <div className="flex-1 min-w-0">
-                                <h4 className="font-semibold text-gray-900 truncate">
-                                    {doc.filename}
-                                </h4>
-                                <div className="flex gap-3 mt-1 text-sm text-gray-600">
-                                    <span>{formatFileSize(doc.file_size_bytes)}</span>
-                                    <span>•</span>
-                                    <span>{formatDate(doc.created_at)}</span>
-                                </div>
-                            </div>
+            <div className="space-y-2 max-h-130 overflow-y-auto">
+                {documents.map((doc) => {
+                    const normalizedStatus = doc.status.toLowerCase();
+                    const displayStatus =
+                        normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1);
+
+                    return (
+                        <div
+                            key={doc.id}
+                            className="p-3 border border-gray-200 rounded-lg hover:shadow-md transition cursor-pointer"
+                            onClick={() => onSelectDocument(doc)}
+                        >
+                            <h4
+                                className="font-semibold text-gray-900 text-sm wrap-break-word"
+                                title={doc.filename}
+                            >
+                                {doc.filename}
+                            </h4>
 
                             <span
-                                className={`px-3 py-1 rounded-full text-sm font-medium ${doc.status === 'processed'
-                                        ? 'bg-green-100 text-green-800'
-                                        : doc.status === 'processing'
-                                            ? 'bg-blue-100 text-blue-800'
-                                            : 'bg-gray-100 text-gray-800'
+                                className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${normalizedStatus === 'processed'
+                                    ? 'bg-green-100 text-green-800'
+                                    : normalizedStatus === 'processing'
+                                        ? 'bg-blue-100 text-blue-800'
+                                        : 'bg-gray-100 text-gray-800'
                                     }`}
                             >
-                                {doc.status}
+                                {displayStatus}
                             </span>
+
+                            <div className="mt-1 text-xs text-gray-600 space-y-0.5">
+                                <div>{formatFileSize(doc.file_size_bytes)}</div>
+                                <div>{formatDate(doc.created_at)}</div>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );

@@ -44,7 +44,7 @@ function App() {
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 bottom-0 w-64 bg-white shadow-lg transform transition-transform z-50 lg:relative lg:transform-none ${showSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed left-0 top-0 bottom-0 w-80 bg-white shadow-lg transform transition-transform z-50 lg:relative lg:transform-none ${showSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
       >
         <div className="p-4 border-b">
@@ -74,7 +74,7 @@ function App() {
                 📄 DocuMind
               </h1>
               <p className="text-lg text-gray-600">
-                AI-powered document intelligence with Ollama
+                AI-powered pdf intelligence system
               </p>
             </div>
 
