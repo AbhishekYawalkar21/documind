@@ -6,13 +6,15 @@ DocuMind is a document intelligence system that extracts and analyzes informatio
  
 ## 🚀 Key Features
  
-* 📝 **Automated Summarization** — generates concise summaries and topic extraction from lengthy PDFs
-* 👥 **Entity Extraction** — structured extraction of names, dates, amounts, emails, and more from unstructured text
-* ⚠️ **Compliance & PII Detection** — flags GDPR, PII, and security-related issues in document content
-* 🔗 **Knowledge Graph Generation** — maps relationships between extracted entities
-* 🔍 **Retrieval-Augmented Q&A** — pgvector-based semantic search over document embeddings to answer questions with relevant context
-* 🧠 **Agentic Orchestration** — a LangGraph multi-step agent coordinates each stage as an independent, testable node
-* 🤖 **Local, Privacy-Preserving Inference** — runs entirely on self-hosted Ollama models, with no external API calls or data leaving the system
+* 📄 **Document Ingestion & Chunking** — PDF upload with text extraction and overlapping semantic chunking.
+* 📝 **Automated Summarization** — Generates concise summaries and key topic extraction from lengthy documents.
+* 👥 **Entity Extraction** — Structured extraction of names, dates, financial amounts, and contact details.
+* ⚠️ **Compliance & PII Detection** — Flags GDPR, PII, and security-related risks in document content.
+* 🔗 **Knowledge Graph Generation** — Maps relationships between extracted entities.
+* 🔍 **Retrieval-Augmented Q&A (RAG)** — Contextual document querying powered by pgvector semantic search.
+* 📜 **Document History** — Persistent record of uploaded documents, analysis results, and past Q&A sessions.
+* 🧠 **Agentic Orchestration** — A modular 5-node LangGraph agent coordinates the full analysis pipeline.
+* 🔒 **100% Local & Privacy-Preserving** — Self-hosted inference via Ollama, with no external API calls or data leaving the system.
 
 ---
 
