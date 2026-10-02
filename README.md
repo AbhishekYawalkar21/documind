@@ -111,7 +111,7 @@ venv\Scripts\Activate.ps1
 source venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env       # then fill in your values
+cp .env.example .env      # then fill in your values
 uvicorn app.main:app --reload
 ```
 
